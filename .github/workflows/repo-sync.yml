@@ -1,0 +1,23 @@
+name: Repo Sync
+on:
+  schedule:
+    - cron: "0 0 * * *" # 每天0点运行
+jobs:
+  repo-sync:
+    name: Repo Sync
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: repo-sync/github-sync@v2
+      name: Sync repo to branch
+      with:
+        source_repo: "LibreSpark/LibreTV"
+        source_branch: main
+        destination_branch: "libretv-sync"
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: repo-sync/pull-request@v2
+      name: Create pull request
+      with:
+        source_branch: "libretv-sync"
+        destination_branch: main
+        github_token: ${{ secrets.GITHUB_TOKEN }}
